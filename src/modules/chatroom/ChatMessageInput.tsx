@@ -28,7 +28,7 @@ export const ChatMessageInput: FC<Props> = (props) => {
   return (
     <div className={classes.div}>
       <Textarea classNames={{input: classes.input, wrapper: classes.inputWrapper}} onChange={props.setInputValue}
-                value={props.inputValue} autosize maxRows={4}></Textarea>
+                value={props.inputValue} autosize maxRows={4} maxLength={500}></Textarea>
     </div>
   )
 }

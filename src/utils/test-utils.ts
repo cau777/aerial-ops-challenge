@@ -1,0 +1,1 @@
+export const testId = () => Math.random().toString().replace(".", "");

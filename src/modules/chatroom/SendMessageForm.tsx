@@ -1,8 +1,9 @@
 import React, {FC, FormEvent, useState} from "react";
 import {createStyles, Button} from "@mantine/core";
-import {ChatMessageInput} from "~/modules/chatroom/ChatMessageInput";
+import {ChatMessageInput} from "../../modules/chatroom/ChatMessageInput";
 import {useInputState} from "@mantine/hooks";
 import {ChatFileInput} from "~/modules/chatroom/ChatFileInput";
+import {trpc} from "../../utils/trpc";
 
 const useStyles = createStyles(() => ({
   flexContainer: {
@@ -14,17 +15,18 @@ const useStyles = createStyles(() => ({
 
 export const SendMessageForm: FC = () => {
   const [messageValue, setMessageValue] = useInputState("");
-  const [file, setFile] = useState<File|null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const {classes} = useStyles();
+  let {mutateAsync, error, isLoading} = trpc.add.useMutation();
   
-  const submitForm = (e: FormEvent) => {
+  const submitForm = async (e: FormEvent) => {
     e.preventDefault();
     
     // Don't send empty messages
     const trimmedMessage = messageValue.trim();
     if (trimmedMessage.length == 0) return;
     
-    console.log(messageValue);
+    await mutateAsync({message: trimmedMessage});
   }
   
   return (
