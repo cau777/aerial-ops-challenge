@@ -1,11 +1,9 @@
-/**
- * This is a Next.js page.
- */
-import { trpc } from '../utils/trpc';
-import {SendMessageForm} from "~/modules/chatroom/SendMessageForm";
+import {FullChatRoom} from "../modules/chatroom/FullChatroom";
 
 export default function IndexPage() {
   return (
-    <SendMessageForm></SendMessageForm>
+    <>
+    <FullChatRoom/>
+    </>
   )
 }

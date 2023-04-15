@@ -1,23 +1,13 @@
 import React, {FC, FormEvent, useState} from "react";
-import {createStyles, Button} from "@mantine/core";
 import {ChatMessageInput} from "../../modules/chatroom/ChatMessageInput";
-import {useInputState} from "@mantine/hooks";
 import {ChatFileInput} from "~/modules/chatroom/ChatFileInput";
 import {trpc} from "../../utils/trpc";
-
-const useStyles = createStyles(() => ({
-  flexContainer: {
-    display: "flex",
-    gap: "0.4rem",
-    alignItems: "center",
-  }
-}))
+import {IconButton} from "../common/IconButton";
 
 export const SendMessageForm: FC = () => {
-  const [messageValue, setMessageValue] = useInputState("");
+  const [messageValue, setMessageValue] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const {classes} = useStyles();
-  let {mutateAsync, error, isLoading} = trpc.add.useMutation();
+  let {mutateAsync, error, isLoading} = trpc.msg.add.useMutation();
   
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
@@ -31,10 +21,12 @@ export const SendMessageForm: FC = () => {
   
   return (
     <form onSubmit={submitForm}>
-      <div className={classes.flexContainer}>
-        <ChatMessageInput inputValue={messageValue} setInputValue={setMessageValue}/>
+      <div className={"flex bg-back-light-0 shadow p-3 gap-3"}>
+        <ChatMessageInput inputValue={messageValue} onInputChange={setMessageValue}/>
         <ChatFileInput setFile={setFile}/>
-        <Button type={"submit"}>Sub</Button>
+        <div>
+          <IconButton type={"submit"} disabled={false}>Subm</IconButton>
+        </div>
       </div>
     </form>
   )

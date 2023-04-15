@@ -1,27 +1,11 @@
 import {ChangeEvent, FC} from "react";
-import {createStyles} from "@mantine/core";
+import {IconButton} from "../common/IconButton";
 
 type Props = {
   setFile: (value: File | null) => void;
 }
 
-const useStyle = createStyles((theme) => ({
-  input: {
-    color: "white",
-    display: "none"
-  },
-  icon: {
-    backgroundColor: theme.colors.blue[6],
-    color: "white",
-    padding: "0.325rem",
-    borderRadius: "0.25rem",
-    cursor: "pointer"
-  }
-}))
-
 export const ChatFileInput: FC<Props> = (props) => {
-  const {classes} = useStyle();
-  
   const change = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.currentTarget.files;
     if (files == null)
@@ -32,9 +16,9 @@ export const ChatFileInput: FC<Props> = (props) => {
   
   return (
     <label htmlFor={"fileInput"}>
-      <input id={"fileInput"} className={classes.input} type={"file"} multiple={false} accept={"image/png,image/jpeg"}
+      <input id={"fileInput"} className={"hidden pointer"} type={"file"} multiple={false} accept={"image/png,image/jpeg"}
              onChange={change}/>
-      <div className={classes.icon}>Icon</div>
+      <IconButton type={"button"} disabled={false}>Icon</IconButton>
     </label>
   )
 }

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Verdana, sans-serif;
+  }
+
+  body {
+    @apply bg-back-light-300;
+    height: 100vh;
+  }
+
+  #__next {
+    height: 100vh;
+  }
+
+  .grid-center {
+    display: grid;
+    align-items: center;
+  }
+}

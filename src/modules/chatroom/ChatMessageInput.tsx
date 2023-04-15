@@ -1,34 +1,16 @@
-import {ChangeEventHandler, FC} from "react";
-import {createStyles, Textarea} from "@mantine/core";
+import {FC} from "react";
+import {AutosizeTextarea} from "../common/AutosizeTextarea";
 
 type Props = {
   inputValue: string;
-  setInputValue: ChangeEventHandler<HTMLTextAreaElement>;
+  onInputChange: (value: string) => void;
   imageNamePreviewValue?: string;
 }
 
-const useStyles = createStyles(() => ({
-  input: {
-    minHeight: "2rem",
-    paddingTop: "1.2rem",
-    width:  "100%",
-    flexGrow: 1
-  },
-  inputWrapper: {
-    width: "100%",
-  },
-  div: {
-    width: "100%",
-  }
-}))
-
 export const ChatMessageInput: FC<Props> = (props) => {
-  const {classes} = useStyles();
-  
   return (
-    <div className={classes.div}>
-      <Textarea classNames={{input: classes.input, wrapper: classes.inputWrapper}} onChange={props.setInputValue}
-                value={props.inputValue} autosize maxRows={4} maxLength={500}></Textarea>
+    <div className={"relative w-full"}>
+      <AutosizeTextarea value={props.inputValue} onChange={props.onInputChange} autoSize={true} minRows={2} maxRows={4}></AutosizeTextarea>
     </div>
   )
 }
