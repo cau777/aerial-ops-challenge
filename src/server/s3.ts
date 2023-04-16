@@ -1,5 +1,5 @@
 import {S3Client} from "@aws-sdk/client-s3";
-import {getEnvVar} from "./env";
+import {getEnvVar} from "../utils/env";
 
 const AWS_S3_REGION = getEnvVar("AWS_S3_REGION");
 const AWS_S3_KEY_ID = getEnvVar("AWS_S3_KEY_ID");

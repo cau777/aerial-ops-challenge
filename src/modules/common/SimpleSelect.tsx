@@ -7,7 +7,8 @@ type Props = {
 
 export const SimpleSelect: FC<Props> = (props) => {
   return (
-    <select className={"border-2 rounded ps-2 font-light outline-none focus:border-blue-800"}>
+    <select className={"border-2 rounded ps-2 font-light outline-none focus:border-blue-800"}
+            onChange={e => props.onChange(e.currentTarget.value)}>
       {props.data.map(o => (
         <option value={o.value} key={o.value}>{o.label}</option>
       ))}

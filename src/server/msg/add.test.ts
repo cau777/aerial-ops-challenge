@@ -1,7 +1,7 @@
 import * as addRoute from "./add";
-import {getTestDbClient} from "../utils/testing/setup-files";
+import {getTestDbClient} from "../../utils/testing/setup-files";
 import {S3Client} from "@aws-sdk/client-s3";
-import {testId} from "../utils/testing/test-utils";
+import {testId} from "../../utils/testing/test-utils";
 
 const COLLECTION_NAME = "messages";
 describe("add route", () => {

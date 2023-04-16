@@ -7,6 +7,7 @@ type Props = {
   minRows?: number;
   autoSize?: boolean;
   manualResize?: boolean;
+  maxLength?: number;
 }
 
 export const AutosizeTextarea: FC<Props> = (props) => {
@@ -19,6 +20,6 @@ export const AutosizeTextarea: FC<Props> = (props) => {
   
   return (
     <textarea className={"resize-none border-2 w-full rounded bg-back-light-100 p-2 outline-none focus:border-blue-400 transition-all duration-200"}
-              rows={rows} onChange={e => props.onChange?.(e.currentTarget.value)} value={props.value}></textarea>
+              rows={rows} onChange={e => props.onChange?.(e.currentTarget.value)} value={props.value} maxLength={props.maxLength}></textarea>
   )
 }

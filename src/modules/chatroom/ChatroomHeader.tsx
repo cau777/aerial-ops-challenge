@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {OrderFlow, OrderKey} from "../../server/list";
+import {OrderFlow, OrderKey} from "../../server/msg/list";
 import {ToggleButton} from "../common/ToggleButton";
 import {SimpleSelect} from "../common/SimpleSelect";
 

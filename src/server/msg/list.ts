@@ -1,5 +1,7 @@
 import {z} from "zod";
-import {db} from "~/utils/db";
+import {messagesCollection} from "../db";
+import {MessageModelWithId} from "../db-models";
+import {Db} from "mongodb";
 
 const OrderFlow = z.enum(["asc", "desc"]);
 export type OrderFlow = z.infer<typeof OrderFlow>;
@@ -14,7 +16,7 @@ export const Input = z.object({
 
 export type Input = z.infer<typeof Input>;
 
-export const handler = async (input: Input) => {
+export const handler = async (input: Input, db: Db) => {
   const order = input.orderFlow === "asc" ? 1 : -1;
   let sortingStep;
   switch (input.orderKey) {
@@ -26,11 +28,12 @@ export const handler = async (input: Input) => {
       break
   }
   
-  const result = await db.collection("messages")
-    .aggregate([
-      sortingStep // TODO: limit
-    ])
-    .toArray();
-  console.log(result)
-  return result;
+  const result = await messagesCollection(db).aggregate([
+    sortingStep // TODO: limit
+  ]).toArray();
+  
+  return result
+    .map(o => MessageModelWithId.safeParse(o))
+    .map(o => o.success ? o.data : null)
+    .filter((o): o is MessageModelWithId => o! !== null)
 }

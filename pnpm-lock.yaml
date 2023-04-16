@@ -37,9 +37,12 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  ts-mongo:
+    specifier: github:tianhuil/ts-mongo
+    version: github.com/tianhuil/ts-mongo/2cb5e7040a189be1a1393cd0dee5f240d2af510a
   zod:
-    specifier: ^3.0.0
-    version: 3.0.0
+    specifier: ^3.21.0
+    version: 3.21.0
 
 devDependencies:
   '@types/jest':
@@ -4502,6 +4505,12 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zod@3.0.0:
-    resolution: {integrity: sha512-4DBG6siN02ooPB1yvEEqoe32maHzKEdGgtQ2HEz6FnFtgTjwZtzJ3ScuiDgtssWfDyLnQ3MvtSj6ff5ANL4STw==}
+  /zod@3.21.0:
+    resolution: {integrity: sha512-UYdykTcVxB6lfdyLzAqLyyYAlOcpoluECvjsdoaqfQmz9p+3LRaIqYcNiL/J2kFYp66fBM8wwBvIGVEjq7KtZw==}
+    dev: false
+
+  github.com/tianhuil/ts-mongo/2cb5e7040a189be1a1393cd0dee5f240d2af510a:
+    resolution: {tarball: https://codeload.github.com/tianhuil/ts-mongo/tar.gz/2cb5e7040a189be1a1393cd0dee5f240d2af510a}
+    name: ts-mongo
+    version: 1.0.0
     dev: false

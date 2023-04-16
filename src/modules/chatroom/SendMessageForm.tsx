@@ -3,11 +3,15 @@ import {ChatMessageInput} from "../../modules/chatroom/ChatMessageInput";
 import {ChatFileInput} from "~/modules/chatroom/ChatFileInput";
 import {trpc} from "../../utils/trpc";
 import {IconButton} from "../common/IconButton";
+import type {Input} from "../../server/msg/add";
+import {SendIcon} from "../common/icons/SendIcon";
+import {LoadingIcon} from "../common/icons/LoadingIcon";
+import {InlineErrorSmall} from "../common/InlineErrorSmall";
 
 export const SendMessageForm: FC = () => {
   const [messageValue, setMessageValue] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  let {mutateAsync, error, isLoading} = trpc.msg.add.useMutation();
+  let {mutateAsync, isLoading, isError} = trpc.msg.add.useMutation();
   
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
@@ -16,16 +20,44 @@ export const SendMessageForm: FC = () => {
     const trimmedMessage = messageValue.trim();
     if (trimmedMessage.length == 0) return;
     
-    await mutateAsync({message: trimmedMessage});
+    const request: Input = {message: trimmedMessage};
+    
+    if (file !== null) {
+      // TODO Validate mime type
+      const extension = file.name.match(/.+(\..+)/);
+      if (extension === null || extension.length < 2)
+        throw new TypeError("Invalid file name");
+      
+      request.image = {
+        formatExtension: extension[1] // Group 1 will be only the extension
+      }
+    }
+    
+    const response = await mutateAsync(request);
+    
+    if (file !== null && response.imageUrl !== undefined) {
+      await fetch(response.imageUrl, {
+        method: "PUT",
+        body: await file.arrayBuffer(),
+      })
+    }
+    
+    setFile(null);
+    setMessageValue("");
   }
   
   return (
-    <form onSubmit={submitForm}>
-      <div className={"flex bg-back-light-0 shadow p-3 gap-3"}>
-        <ChatMessageInput inputValue={messageValue} onInputChange={setMessageValue}/>
+    <form className={"bg-back-light-0 shadow p-3"} onSubmit={submitForm}>
+      {isError && <InlineErrorSmall message={"An error occurred. Try again later."}/>}
+      <div className={"flex gap-3 items-center"}>
+        <ChatMessageInput inputValue={messageValue} onInputChange={setMessageValue} imageNamePreviewValue={file?.name}
+                          removeImage={() => setFile(null)}/>
         <ChatFileInput setFile={setFile}/>
         <div>
-          <IconButton type={"submit"} disabled={false}>Subm</IconButton>
+          <IconButton type={"submit"} disabled={isLoading}>
+            {!isLoading && <SendIcon width={"2rem"} height={"2rem"}/>}
+            {isLoading && <LoadingIcon width={"2rem"} height={"2rem"}/>}
+          </IconButton>
         </div>
       </div>
     </form>

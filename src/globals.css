@@ -21,3 +21,27 @@
     align-items: center;
   }
 }
+
+@layer components {
+  .loading-icon {
+    animation: 3s infinite linear loading-icon-anim;
+  }
+
+  @keyframes loading-icon-anim {
+    0% {
+      rotate: 0deg;
+    }
+    25% {
+      rotate: 90deg;
+    }
+    50% {
+      rotate: 180deg;
+    }
+    75% {
+      rotate: 270deg;
+    }
+    100% {
+      rotate: 360deg;
+    }
+  }
+}
