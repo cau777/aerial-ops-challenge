@@ -6,9 +6,15 @@ type Props = {
   onInputChange: (value: string) => void;
   imageNamePreviewValue?: string;
   removeImage: () => void;
+  onSubmitMessage: () => void;
 }
 
 export const ChatMessageInput: FC<Props> = (props) => {
+  const onKeyDown = (key: string, shift: boolean) => {
+    if (key === "Enter" && !shift)
+      props.onSubmitMessage();
+  }
+  
   return (
     <div className={"w-full"}>
       {props.imageNamePreviewValue && (
@@ -21,7 +27,7 @@ export const ChatMessageInput: FC<Props> = (props) => {
       )}
       
       <AutosizeTextarea value={props.inputValue} onChange={props.onInputChange} autoSize={true} minRows={2}
-                        maxRows={4} maxLength={500}></AutosizeTextarea>
+                        maxRows={4} maxLength={500} onKeyDown={onKeyDown}></AutosizeTextarea>
     </div>
   )
 }

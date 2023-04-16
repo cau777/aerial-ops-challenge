@@ -13,3 +13,25 @@ export const formatTime = (date: Date) => {
   
   return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 }
+
+/**
+ * Should be used before consuming key names, because some browsers (InternetExplorer and Edge) use different naming
+ * conventions for some keys
+ * @param key
+ */
+export const prepareKey = (key: string) => {
+  switch (key) {
+    case "Down":
+      return "ArrowDown";
+    case "Up":
+      return "ArrowUp";
+    case "Left":
+      return "ArrowLeft";
+    case "Right":
+      return "ArrowRight";
+    case "Esc":
+      return "Escape";
+    default:
+      return key;
+  }
+}
