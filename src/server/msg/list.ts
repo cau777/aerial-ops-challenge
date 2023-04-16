@@ -6,32 +6,46 @@ import {Db} from "mongodb";
 const OrderFlow = z.enum(["asc", "desc"]);
 export type OrderFlow = z.infer<typeof OrderFlow>;
 
-const OrderKey = z.enum(["message", "time"]);
-export type OrderKey = z.infer<typeof OrderKey>;
+const Common = z.object({
+    orderFlow: OrderFlow,
+    limit: z.number().default(10),
+})
 
-export const Input = z.object({
-  orderFlow: OrderFlow,
-  orderKey: OrderKey,
-});
+export const Input = z.discriminatedUnion("orderKey", [z.object({
+  orderKey: z.literal("message"),
+  cursor: z.string().optional(),
+}), z.object({
+  orderKey: z.literal("time"),
+  cursor: z.number().optional(),
+})]).and(Common);
 
 export type Input = z.infer<typeof Input>;
+export type OrderKey = Input["orderKey"];
+type Output = Promise<MessageModelWithId[]>;
 
-export const handler = async (input: Input, db: Db) => {
-  const order = input.orderFlow === "asc" ? 1 : -1;
-  let sortingStep;
+export const handler = async (input: Input, db: Db): Output => {
+  const order = input.orderFlow === "asc" ? -1 : 1;
+  
+  const innerCursorFilter = input.orderFlow === "asc" ? {$lt: input.cursor} : {$gt: input.cursor};
+  const query = await messagesCollection(db).find();
+  
   switch (input.orderKey) {
     case "message":
-      sortingStep = {$sort: {message: order}};
+      if (input.cursor !== undefined)
+        query.filter({message: innerCursorFilter});
+      // This makes sorting case-insensitive
+      query.collation({locale: "en"});
+      query.sort({message: order});
       break
     case "time":
-      sortingStep = {$sort: {timestamp: order}};
+      if (input.cursor !== undefined)
+        query.filter({timestamp: innerCursorFilter});
+      query.sort({timestamp: order});
       break
   }
+  query.limit(input.limit);
   
-  const result = await messagesCollection(db).aggregate([
-    sortingStep // TODO: limit
-  ]).toArray();
-  
+  const result = await query.toArray();
   return result
     .map(o => MessageModelWithId.safeParse(o))
     .map(o => o.success ? o.data : null)

@@ -7,11 +7,18 @@ import type {Input} from "../../server/msg/add";
 import {SendIcon} from "../common/icons/SendIcon";
 import {LoadingIcon} from "../common/icons/LoadingIcon";
 import {InlineErrorSmall} from "../common/InlineErrorSmall";
+import {configureOptimisticUpdates} from "../../utils/optimistic-updates";
 
 export const SendMessageForm: FC = () => {
   const [messageValue, setMessageValue] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  let {mutateAsync, isLoading, isError} = trpc.msg.add.useMutation();
+  const utils = trpc.useContext();
+  
+  let {mutateAsync, isLoading, isError} = trpc.msg.add.useMutation({
+    ...configureOptimisticUpdates(utils, (old, nValue) => {
+      return (old === undefined ? [nValue] : [...old, nValue]);
+    }),
+  });
   
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();

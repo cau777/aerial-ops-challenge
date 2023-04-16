@@ -2,6 +2,8 @@ import {FC} from "react";
 import {trpc} from "../../utils/trpc";
 import {OrderFlow, OrderKey} from "../../server/msg/list";
 import {MessageDisplay} from "./MessageDisplay";
+import {FeedEndIndicator} from "./FeedEndIndicator";
+import {FreezeScrollOnAdd} from "../common/FreezeScrollOnAdd";
 
 type Props = {
   orderKey: OrderKey;
@@ -9,24 +11,39 @@ type Props = {
 }
 
 export const MessagesFeed: FC<Props> = (props) => {
-  // const scrollFromBottom = useRef(0);
-  // const scrollableElementRef = useRef<HTMLDivElement|null>(null);
-  const messagesQuery = trpc.msg.list.useQuery({orderFlow: props.orderFlow, orderKey: props.orderKey});
+  const {data, isLoading, isFetching, fetchNextPage} = trpc.msg.list.useInfiniteQuery({
+    orderFlow: props.orderFlow,
+    orderKey: props.orderKey,
+    limit: 5, // In production, limit probably should be higher
+  }, {
+    keepPreviousData: true,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.length === 0)
+        return undefined;
+      const last = lastPage[lastPage.length - 1];
+      return props.orderKey === "message" ? last.message : last.timestamp;
+    },
+  });
   
-  // useEffect(() => {
-  //   if (scrollableElementRef.current === null) return;
-  //   scrollableElementRef.current.scroll
-  // }, [messagesQuery.data])
-  
+  const onFeedEnd = async () => {
+    // If the last page returned no data
+    if (data !== undefined && data.pages.length !== 0 && data.pages[data.pages.length - 1].length === 0) {
+      return;
+    }
+    await fetchNextPage();
+  }
   
   return (
-    <div className={"overflow-auto flex-grow h-full bg-back-light-200"}>
+    <FreezeScrollOnAdd className={"overflow-auto flex-grow h-full bg-back-light-200"}>
       <section className={"flex flex-col justify-center px-3 mb-4"}>
-        {messagesQuery.data?.map(m => (
+        <FeedEndIndicator key={data?.pages.length ?? -1} onFeedEndVisible={onFeedEnd}
+                          isLoading={isLoading || isFetching}/>
+        
+        {data?.pages.flatMap(o => o).reverse().map(m => (
           <MessageDisplay key={m._id} id={m._id} message={m.message} timestamp={m.timestamp}
                           image={m.type === "img" ? m.image : undefined}></MessageDisplay>
         ))}
       </section>
-    </div>
+    </FreezeScrollOnAdd>
   )
 }

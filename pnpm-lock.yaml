@@ -37,9 +37,9 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
-  ts-mongo:
-    specifier: github:tianhuil/ts-mongo
-    version: github.com/tianhuil/ts-mongo/2cb5e7040a189be1a1393cd0dee5f240d2af510a
+  react-intersection-observer:
+    specifier: ^9.4.3
+    version: 9.4.3(react@18.2.0)
   zod:
     specifier: ^3.21.0
     version: 3.21.0
@@ -3923,6 +3923,14 @@ packages:
       scheduler: 0.23.0
     dev: false
 
+  /react-intersection-observer@9.4.3(react@18.2.0):
+    resolution: {integrity: sha512-WNRqMQvKpupr6MzecAQI0Pj0+JQong307knLP4g/nBex7kYfIaZsPpXaIhKHR+oV8z+goUbH9e10j6lGRnTzlQ==}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: true
@@ -4507,10 +4515,4 @@ packages:
 
   /zod@3.21.0:
     resolution: {integrity: sha512-UYdykTcVxB6lfdyLzAqLyyYAlOcpoluECvjsdoaqfQmz9p+3LRaIqYcNiL/J2kFYp66fBM8wwBvIGVEjq7KtZw==}
-    dev: false
-
-  github.com/tianhuil/ts-mongo/2cb5e7040a189be1a1393cd0dee5f240d2af510a:
-    resolution: {tarball: https://codeload.github.com/tianhuil/ts-mongo/tar.gz/2cb5e7040a189be1a1393cd0dee5f240d2af510a}
-    name: ts-mongo
-    version: 1.0.0
     dev: false
