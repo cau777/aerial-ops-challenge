@@ -2,6 +2,7 @@ import {z} from "zod";
 import {Db, ObjectId} from "mongodb";
 import {DeleteObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {messagesCollection} from "../utils/collections";
+import {rethrowForClient} from "../utils/errors";
 
 export const Input = z.object({
   id: z.string()
@@ -10,20 +11,24 @@ export const Input = z.object({
 export type Input = z.infer<typeof Input>;
 
 export const handle = async (input: Input, db: Db, storage: S3Client, bucketName: string) => {
-  const result = await messagesCollection(db).findOneAndDelete({
-    _id: {$eq: new ObjectId(input.id)}
-  }, {});
-  
-  if (result.ok === 0 || result.value === null)
-    throw new Error("Message not found");
-  
-  // Also delete the stored image in S3
-  if (result.value.type === "img") {
-    const command = new DeleteObjectCommand({
-      Key: result.value.image,
-      Bucket: bucketName,
-    });
+  try {
+    const result = await messagesCollection(db).findOneAndDelete({
+      _id: {$eq: new ObjectId(input.id)}
+    }, {});
     
-    await storage.send(command);
+    if (result.ok === 0 || result.value === null)
+      throw new Error("Message not found");
+    
+    // Also delete the stored image in S3
+    if (result.value.type === "img") {
+      const command = new DeleteObjectCommand({
+        Key: result.value.image,
+        Bucket: bucketName,
+      });
+      
+      await storage.send(command);
+    }
+  } catch (e) {
+    return rethrowForClient(e);
   }
 }

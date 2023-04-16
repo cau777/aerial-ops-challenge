@@ -1,4 +1,4 @@
-import {FC} from "react";
+import {FC, KeyboardEvent} from "react";
 import {AutosizeTextarea} from "../../common/components/AutosizeTextarea";
 
 type Props = {
@@ -10,9 +10,11 @@ type Props = {
 }
 
 export const ChatMessageInput: FC<Props> = (props) => {
-  const onKeyDown = (key: string, shift: boolean) => {
-    if (key === "Enter" && !shift)
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       props.onSubmitMessage();
+    }
   }
   
   return (

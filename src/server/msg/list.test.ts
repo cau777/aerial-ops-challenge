@@ -20,7 +20,7 @@ describe("list route", () => {
   
   it('should get all elements at once', async () => {
     await db.collection(COLLECTION_NAME).insertMany(EXAMPLE_ITEMS);
-    const result = await listRoute.handler({orderKey: "time", limit: 10, orderFlow: "asc"}, db);
+    const result = await listRoute.handler({orderKey: "time", limit: 10, orderFlow: "asc", cursor: {}}, db);
     expect(result.length).toEqual(4);
     expect(new Set(result.map(o => o.timestamp)).size).toEqual(4); // Check duplicates
   });
@@ -31,7 +31,7 @@ describe("list route", () => {
     const result: number[] = []
     
     for (let i = 0; i < 4; i++) {
-      const page: MessageModel[] = await listRoute.handler({orderKey: "time", limit: 1, orderFlow: "asc", cursor: last}, db);
+      const page: MessageModel[] = await listRoute.handler({orderKey: "time", limit: 1, orderFlow: "asc", cursor: {max: last}}, db);
       expect(page.length).toEqual(1);
       last = page[0].timestamp;
       result.push(page[0].timestamp);

@@ -4,7 +4,7 @@ import {prepareKey} from "../../chatroom/utils/formatting";
 type Props = {
   value: string;
   onChange?: (value: string) => void;
-  onKeyDown?: (key: string, shift: boolean, alt: boolean, ctrl: boolean) => void;
+  onKeyDown?: (e: KeyboardEvent) => void;
   maxRows?: number;
   minRows?: number;
   autoSize?: boolean;
@@ -19,8 +19,8 @@ export const AutosizeTextarea: FC<Props> = (props) => {
   }
   
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (props.onKeyDown !== undefined)
-      props.onKeyDown(prepareKey(e.key), e.shiftKey, e.altKey, e.ctrlKey)
+    e.key = prepareKey(e.key);
+    props.onKeyDown?.(e);
   }
   
   const rows = props.autoSize ? getSize(props.value) : undefined;

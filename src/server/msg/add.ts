@@ -5,6 +5,7 @@ import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {Db} from "mongodb";
 import {MessageModel} from "../models/message.model";
 import {messagesCollection} from "../utils/collections";
+import {rethrowForClient} from "../utils/errors";
 
 export const Input = z.object({
   message: z.string().min(1).max(500),
@@ -21,27 +22,31 @@ export type Input = z.infer<typeof Input>;
 type Output = Promise<{ imageUrl?: string }>;
 
 export const handler = async (input: Input, db: Db, storage: S3Client, bucketName: string): Output => {
-  const timestamp = Date.now();
-  const imgName = input.image === undefined ? undefined: generateImgName(input.image.formatExtension);
-  
-  const entry: MessageModel = input.image === undefined
-    ? {type: "text", message: input.message, timestamp}
-    : {type: "img", message: input.message, timestamp, image: imgName!};
-  
-  await messagesCollection(db).insertOne(entry);
-  
-  if (imgName === undefined)
-    return {};
-  
-  const command = new PutObjectCommand({
-    Key: imgName,
-    Bucket: bucketName,
-  });
-  
-  const url = await getSignedUrl(storage, command, {
-    // Two minutes will give enough time for the client to upload the image, even if the connection is slow
-    expiresIn: 120,
-  });
-  
-  return {imageUrl: url};
+  try {
+    const timestamp = Date.now();
+    const imgName = input.image === undefined ? undefined : generateImgName(input.image.formatExtension);
+    
+    const entry: MessageModel = input.image === undefined
+      ? {type: "text", message: input.message, timestamp}
+      : {type: "img", message: input.message, timestamp, image: imgName!};
+    
+    await messagesCollection(db).insertOne(entry);
+    
+    if (imgName === undefined)
+      return {};
+    
+    const command = new PutObjectCommand({
+      Key: imgName,
+      Bucket: bucketName,
+    });
+    
+    const url = await getSignedUrl(storage, command, {
+      // Two minutes will give enough time for the client to upload the image, even if the connection is slow
+      expiresIn: 120,
+    });
+    
+    return {imageUrl: url};
+  } catch (e) {
+    return rethrowForClient(e);
+  }
 }

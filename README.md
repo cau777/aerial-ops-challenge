@@ -69,7 +69,10 @@ websocket
 #### How image upload works
 When the client sends a request to the server, it can specify an 'image' field with information about the image
 it will upload. Currently, the only field is the image extension
-
+#### Test coverage
+Tests cover the basic behaviour of the 3 procedures.
+Some E2E tests are necessary
+rate limiter
 dependency injection
 ## Missing features
 * Usernames

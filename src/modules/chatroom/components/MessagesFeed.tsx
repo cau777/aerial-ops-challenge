@@ -11,17 +11,19 @@ type Props = {
 }
 
 export const MessagesFeed: FC<Props> = (props) => {
-  const {data, isLoading, isFetching, fetchNextPage, fetchPreviousPage} = trpc.msg.list.useInfiniteQuery({
+  const {data, isLoading, isFetching, fetchNextPage} = trpc.msg.list.useInfiniteQuery({
     orderFlow: props.orderFlow,
     orderKey: props.orderKey,
-    limit: 5, // In production, limit probably should be higher
+    limit: 5, // In production, limit probably should be higher. It's 5 for demonstration purposes.
   }, {
     keepPreviousData: true,
     getNextPageParam: (lastPage) => {
       if (lastPage.length === 0)
         return undefined;
       const last = lastPage[lastPage.length - 1];
-      return props.orderKey === "message" ? last.message : last.timestamp;
+      const value = props.orderKey === "message" ? last.message : last.timestamp
+      
+      return props.orderFlow === "asc" ? {max: value} : {min: value};
     },
   });
   
