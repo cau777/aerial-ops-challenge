@@ -1,10 +1,10 @@
 import {z} from "zod";
-import {generateImgName} from "../../utils/images";
+import {generateImgName} from "../../modules/chatroom/utils/images";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {Db} from "mongodb";
-import {MessageModel} from "../db-models";
-import {messagesCollection} from "../db";
+import {MessageModel} from "../models/message.model";
+import {messagesCollection} from "../utils/collections";
 
 export const Input = z.object({
   message: z.string().min(1).max(500),

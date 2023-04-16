@@ -1,7 +1,7 @@
-import {trpc} from "./trpc";
+import {trpc} from "../../common/hooks/trpc";
 import {AnyProcedure, inferProcedureInput} from "@trpc/server";
-import {AppRouter} from "../server/routers/_app";
-import {MessageModel} from "../server/db-models";
+import {AppRouter} from "../../../server/routers/_app";
+import {MessageModel} from "../../../server/models/message.model";
 
 type ContextUtils = ReturnType<typeof trpc.useContext>;
 type ListProcedure = AppRouter["msg"]["list"];

@@ -1,6 +1,6 @@
 import {ChangeEvent, FC, useState} from "react";
-import {ClipIcon} from "../common/icons/ClipIcon";
-import {ErrorModal} from "../common/ErrorModal";
+import {ClipIcon} from "../../common/components/icons/ClipIcon";
+import {ErrorModal} from "../../common/components/ErrorModal";
 import {FileWithExtension} from "./SendMessageForm";
 
 type Props = {

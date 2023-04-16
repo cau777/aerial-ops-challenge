@@ -1,7 +1,7 @@
 import {FC} from "react";
-import {OrderFlow, OrderKey} from "../../server/msg/list";
-import {ToggleButton} from "../common/ToggleButton";
-import {SimpleSelect} from "../common/SimpleSelect";
+import {OrderFlow, OrderKey} from "../../../server/msg/list";
+import {ToggleButton} from "../../common/components/ToggleButton";
+import {SimpleSelect} from "../../common/components/SimpleSelect";
 
 type Props = {
   orderKey: OrderKey;

@@ -1,13 +1,13 @@
 import React, {FC, useState} from "react";
-import {ChatMessageInput} from "../../modules/chatroom/ChatMessageInput";
-import {ChatFileInput} from "~/modules/chatroom/ChatFileInput";
-import {trpc} from "../../utils/trpc";
-import {IconButton} from "../common/IconButton";
-import type {Input} from "../../server/msg/add";
-import {SendIcon} from "../common/icons/SendIcon";
-import {LoadingIcon} from "../common/icons/LoadingIcon";
-import {InlineErrorSmall} from "../common/InlineErrorSmall";
-import {configureOptimisticUpdates} from "../../utils/optimistic-updates";
+import {ChatMessageInput} from "./ChatMessageInput";
+import {ChatFileInput} from "./ChatFileInput";
+import {trpc} from "../../common/hooks/trpc";
+import {IconButton} from "../../common/components/IconButton";
+import type {Input} from "../../../server/msg/add";
+import {SendIcon} from "../../common/components/icons/SendIcon";
+import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
+import {InlineErrorSmall} from "../../common/components/InlineErrorSmall";
+import {configureOptimisticUpdates} from "../utils/optimistic-updates";
 
 export type FileWithExtension = {file: File; extension: string};
 

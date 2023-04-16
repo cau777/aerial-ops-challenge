@@ -1,5 +1,5 @@
 import {FC, KeyboardEvent} from "react";
-import {prepareKey} from "../../utils/formatting";
+import {prepareKey} from "../../chatroom/utils/formatting";
 
 type Props = {
   value: string;

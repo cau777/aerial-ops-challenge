@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {Db, ObjectId} from "mongodb";
 import {DeleteObjectCommand, S3Client} from "@aws-sdk/client-s3";
-import {messagesCollection} from "../db";
+import {messagesCollection} from "../utils/collections";
 
 export const Input = z.object({
   id: z.string()

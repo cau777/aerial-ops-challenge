@@ -1,6 +1,6 @@
 import {FC} from "react";
 import {useInView} from "react-intersection-observer";
-import {LoadingIcon} from "../common/icons/LoadingIcon";
+import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
 
 type Props = {
   onFeedEndVisible: () => void;

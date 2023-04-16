@@ -1,11 +1,11 @@
 import {FC, memo} from "react";
-import {trpc} from "../../utils/trpc";
-import {TrashIcon} from "../common/icons/TrashIcon";
-import {LoadingIcon} from "../common/icons/LoadingIcon";
-import {InlineErrorSmall} from "../common/InlineErrorSmall";
-import {createS3PublicUrl, scheduleImageRefresh} from "../../utils/images";
-import {formatTime} from "../../utils/formatting";
-import {configureOptimisticUpdates} from "../../utils/optimistic-updates";
+import {trpc} from "../../common/hooks/trpc";
+import {TrashIcon} from "../../common/components/icons/TrashIcon";
+import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
+import {InlineErrorSmall} from "../../common/components/InlineErrorSmall";
+import {createS3PublicUrl, scheduleImageRefresh} from "../utils/images";
+import {formatTime} from "../utils/formatting";
+import {configureOptimisticUpdates} from "../utils/optimistic-updates";
 
 type Props = {
   id: string;

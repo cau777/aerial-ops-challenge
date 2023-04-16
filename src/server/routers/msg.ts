@@ -2,8 +2,8 @@ import * as addRoute from "../msg/add";
 import * as listRoute from "../msg/list";
 import * as deleteRoute from "../msg/delete";
 import {publicProcedure, router} from "../trpc";
-import {db} from "../db";
-import {BUCKET_NAME, storageClient} from "../s3";
+import {db} from "../utils/db";
+import {BUCKET_NAME, storageClient} from "../utils/s3";
 
 export const msgRouter = router({
   add: publicProcedure

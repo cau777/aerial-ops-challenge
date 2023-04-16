@@ -1,7 +1,7 @@
 import {z} from "zod";
-import {messagesCollection} from "../db";
-import {MessageModelWithId} from "../db-models";
+import {MessageModelWithId} from "../models/message.model";
 import {Db} from "mongodb";
+import {messagesCollection} from "../utils/collections";
 
 const OrderFlow = z.enum(["asc", "desc"]);
 export type OrderFlow = z.infer<typeof OrderFlow>;

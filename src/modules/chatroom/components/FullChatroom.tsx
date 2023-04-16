@@ -1,7 +1,7 @@
 'use client'
 
 import {FC, useState} from "react";
-import {OrderFlow, OrderKey} from "../../server/msg/list";
+import {OrderFlow, OrderKey} from "../../../server/msg/list";
 import {ChatroomHeader} from "./ChatroomHeader";
 import {MessagesFeed} from "./MessagesFeed";
 import {SendMessageForm} from "./SendMessageForm";

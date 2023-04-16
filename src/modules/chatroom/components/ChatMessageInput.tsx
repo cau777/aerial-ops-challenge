@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {AutosizeTextarea} from "../common/AutosizeTextarea";
+import {AutosizeTextarea} from "../../common/components/AutosizeTextarea";
 
 type Props = {
   inputValue: string;

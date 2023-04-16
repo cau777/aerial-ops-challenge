@@ -1,9 +1,9 @@
 import {FC} from "react";
-import {trpc} from "../../utils/trpc";
-import {OrderFlow, OrderKey} from "../../server/msg/list";
+import {trpc} from "../../common/hooks/trpc";
+import {OrderFlow, OrderKey} from "../../../server/msg/list";
 import {MessageDisplay} from "./MessageDisplay";
 import {FeedEndIndicator} from "./FeedEndIndicator";
-import {FreezeScrollOnAdd} from "../common/FreezeScrollOnAdd";
+import {FreezeScrollOnAdd} from "../../common/components/FreezeScrollOnAdd";
 
 type Props = {
   orderKey: OrderKey;
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const MessagesFeed: FC<Props> = (props) => {
-  const {data, isLoading, isFetching, fetchNextPage} = trpc.msg.list.useInfiniteQuery({
+  const {data, isLoading, isFetching, fetchNextPage, fetchPreviousPage} = trpc.msg.list.useInfiniteQuery({
     orderFlow: props.orderFlow,
     orderKey: props.orderKey,
     limit: 5, // In production, limit probably should be higher
