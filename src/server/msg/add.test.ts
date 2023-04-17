@@ -3,6 +3,7 @@ import {DeleteObjectCommand, GetObjectCommand, S3Client} from "@aws-sdk/client-s
 import {getTestDbClient, getTestStorageClient, testId} from "../utils/testing/test-utils";
 
 const COLLECTION_NAME = "messages";
+const IMAGE_SIZE = 4;
 describe("add route", () => {
   jest.setTimeout(20_000);
   
@@ -32,14 +33,14 @@ describe("add route", () => {
    
     const urls = [];
     for (let i = 0; i < 2; i++) {
-      urls.push(await addRoute.handler({message: i.toString(), image: {formatExtension: ".png"}}, db, storageClient, bucketName));
+      urls.push(await addRoute.handler({message: i.toString(), image: {formatExtension: ".png", size: IMAGE_SIZE}}, db, storageClient, bucketName));
     }
     
     const count = await db.collection(COLLECTION_NAME).countDocuments();
     expect(count).toEqual(2);
   
     for (let url of urls) {
-      await fetch(url.imageUrl!, {method: "PUT", body: new ArrayBuffer(4)});
+      await fetch(url.imageUrl!, {method: "PUT", body: new ArrayBuffer(IMAGE_SIZE)});
     }
     
     const keys = await db.collection(COLLECTION_NAME).find({}).toArray();

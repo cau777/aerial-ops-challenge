@@ -1,10 +1,10 @@
 import {ChangeEvent, FC, useState} from "react";
 import {ClipIcon} from "../../common/components/icons/ClipIcon";
 import {ErrorModal} from "../../common/components/ErrorModal";
-import {FileWithExtension} from "./SendMessageForm";
+import {FileAndData} from "./SendMessageForm";
 
 type Props = {
-  setFile: (value: FileWithExtension | null) => void;
+  setFile: (value: FileAndData | null) => void;
 }
 
 export const ChatFileInput: FC<Props> = (props) => {
@@ -38,7 +38,17 @@ export const ChatFileInput: FC<Props> = (props) => {
         return;
       }
       
-      props.setFile({file, extension: extension[1]});
+      // The signed URL only allow uploads smaller that 1MB
+      if (file.size > 1_000_000) {
+        setError("The maximum file size allowed is 1MB");
+        return;
+      }
+      
+      props.setFile({
+        file,
+        extension: extension[1],
+        size: file.size
+      });
       
       // Clears the input to be ready for the next file
       e.currentTarget.value = "";

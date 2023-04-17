@@ -9,11 +9,15 @@ import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
 import {InlineErrorSmall} from "../../common/components/InlineErrorSmall";
 import {configureOptimisticUpdates} from "../utils/optimistic-updates";
 
-export type FileWithExtension = {file: File; extension: string};
+export type FileAndData = {
+  file: File;
+  extension: string;
+  size: number;
+};
 
 export const SendMessageForm: FC = () => {
   const [messageValue, setMessageValue] = useState("");
-  const [file, setFile] = useState<FileWithExtension | null>(null);
+  const [file, setFile] = useState<FileAndData | null>(null);
   const utils = trpc.useContext();
   
   let {mutateAsync, isLoading, isError, error} = trpc.msg.add.useMutation({
@@ -36,7 +40,8 @@ export const SendMessageForm: FC = () => {
       // It's not necessary to further validate the file, because the previous functions already did it
       if (file !== null) {
         request.image = {
-          formatExtension: file.extension
+          formatExtension: file.extension,
+          size: file.size,
         };
       }
       
@@ -60,7 +65,8 @@ export const SendMessageForm: FC = () => {
     <div className={"bg-back-light-0 shadow p-3"}>
       {isError && <InlineErrorSmall message={`Failed to send message. Reason: ${error}. Try again later.`}/>}
       <div className={"flex gap-3 items-center"}>
-        <ChatMessageInput inputValue={messageValue} onInputChange={setMessageValue} imageNamePreviewValue={file?.file.name}
+        <ChatMessageInput inputValue={messageValue} onInputChange={setMessageValue}
+                          imageNamePreviewValue={file?.file.name}
                           removeImage={() => setFile(null)} onSubmitMessage={sendMessage}/>
         <ChatFileInput setFile={setFile}/>
         <div>

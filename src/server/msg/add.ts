@@ -15,6 +15,7 @@ export const ZInput = z.object({
   image: z.object({
     // The regex pattern guarantees that the string starts with '.'
     formatExtension: z.string().regex(/\..+/),
+    size: z.number().max(1_001_000), // Limit the maximum upload size to 1MB (with 1 KB of tolerance)
   }).optional(),
 })
 
@@ -37,13 +38,15 @@ export const handler = async (input: ZInput, db: Db, storage: S3Client, bucketNa
     await messagesCollection(db).insertOne(entry);
     
     // If it's a text message, no more work is required
-    if (imgName === undefined)
+    if (imgName === undefined || input.image === undefined)
       return {};
     
     // This command is not executes, just prepared
     const command = new PutObjectCommand({
       Key: imgName,
       Bucket: bucketName,
+      // Content length is sent to ensure that the client will upload a file with the size it specified to the server
+      ContentLength: input.image.size
     });
     
     const url = await getSignedUrl(storage, command, {
