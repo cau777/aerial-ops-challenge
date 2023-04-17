@@ -1,3 +1,5 @@
+[![Testing](https://github.com/cau777/aerial-ops-challenge/actions/workflows/testing.yml/badge.svg)](https://github.com/cau777/aerial-ops-challenge/actions/workflows/testing.yml)
+
 # Aerial Ops Challenge
 This is a simple non-authenticated chat room, built to meet the following requirements.
 - [X] Anyone can enter a message into the single (global) room
@@ -8,72 +10,53 @@ This is a simple non-authenticated chat room, built to meet the following requir
 - [X] Cursor-based pagination
 - [X] ADD and DELETE procedures have optimistic updates
 - [X] Good loading and error experience
+- [X] A jest tests with a badge on the README to indicate status
 
 ## The tech stack
 - tRPC for client-api communication
 - Typescript for type-checking
 - Zod for schema validation
 - NextJS for routes
-- MongoDB to store the messages
-- AWS S3 to store the images
+- MongoDB to store messages
+- AWS S3 to store images
 - Jest for tests
 - pnpm for dependency management
-- Tailwind for CSS
+- Tailwind for styles
 
 ## Application design
 #### File structure
-It follows the basic structure of the [tRPC docs](https://trpc.io/docs/nextjs/setup#recommended-file-structure),
-as well as recommendations of [this article about a modular file structure](https://dev.to/vadorequest/a-2021-guide-about-structuring-your-next-js-project-in-a-flexible-and-efficient-way-472)
-```
-├── src
-│   ├── modules
-│   │   ├── chatroom
-│   │   │   ├── components
-│   │   │   ├── utils
-│   │   │   ├── hooks
-│   │   │   └── [..]
-│   │   └── [..]
-│   ├── pages
-│   │   ├── _app.tsx  # <-- withTRPC() and other HOCs
-│   │   ├── api
-│   │   │   └── trpc
-│   │   │       └── [trpc].ts  # <-- tRPC HTTP handler
-│   │   └── [..]
-│   ├── server
-│   │   ├── models
-│   │   │   ├── message.model.ts  # <-- Zod and type definitions for Message database type
-│   │   │   └── [..]
-│   │   ├── msg
-│   │   │   ├── add.ts  # <-- handler function for msg.route
-│   │   │   ├── add.test.ts  # <-- tests for add.ts
-│   │   │   └── [..]
-│   │   ├── routers
-│   │   │   ├── _app.ts  # <-- main app router
-│   │   │   ├── msg.ts  # <-- messages sub router
-│   │   │   └── [..]
-│   │   ├── utils
-│   │   │   ├── db.ts  # <-- MongoDB client
-│   │   │   └── [..]
-│   │   └── trpc.ts      # <-- procedure helpers
-│   └── globals.css  # <-- Tailwind setup and a FEW global styles
-```
-Even tough this system is more complicated and adds more folders, it's easier to scale and add some features.
-For example, if we were to add a system for communities, we would add a new page in src/pages, create a new router
-in src/server/routers, place our new routes in src/server/community, and place components in src/modules/community/components.
-We wouldn't need to touch anything related to the chatroom.
+It's structured in a modular way. More details [here](https://github.com/cau777/aerial-ops-challenge/blob/main/docs/file-structure.md).
+
+#### Why each procedure is implemented in a different file
+For each procedure (like msg.add), there's a file containing its handler and type definitions, and one containing tests.
+You might notice that handler functions have no dependencies on global objects, like database connections or env
+variables. Instead, these dependencies are supplied as parameters. This dependency injection principle greatly facilitates testing.
 
 #### How new messages are handled
-In regular intervals, the client queries the server for new messages. If the user is searching older messages, it doesn't
-show them immediately as doing so would disorient the user.
-websocket 
+The most popular approach to handling incoming data is to use a technology that allows for persistent connections
+(like WebSockets or ServerSentEvents). They tend to minimize data transfer between the client and the server. However,
+I decided to use the default refetch behaviour of react-query as bringing a new communication protocol would add too much
+complexity (we already have HTTP and tRPC).
+
 #### How image upload works
-When the client sends a request to the server, it can specify an 'image' field with information about the image
-it will upload. Currently, the only field is the image extension
+When the client sends a request to the server, it can specify an 'image' object with information about the image
+it will attach to the message. Currently, the only field in this object is the image extension but we may add more metadata in the future, like
+dimensions or location. So, if the client wants to upload an image, the server responds with a pre-signed S3 url (with
+privilege to upload a file with the exact name the server generated for a limited time). The client then sends a request to that url
+with the file's bytes (no dependency on S3 SDK).
+
 #### Test coverage
-Tests cover the basic behaviour of the 3 procedures.
-Some E2E tests are necessary
-rate limiter
-dependency injection
-## Missing features
-* Usernames
-* Dark theme
+Currently, tests cover the basic behaviour of the 3 server procedures. They rely on a local MongoDb instance and
+a separate S3 storage bucket. It would be beneficial to implement some tests for the client and some E2E tests.
+
+## Possible improvements
+* The app is vulnerable to Denial Of Service attacks because there's nothing preventing a malicious client from sending
+millions of request per second. This would overload the server and quickly exhaust external API resources. A solution
+is to implement rate limiting, but that's more challenging in a non-authenticated environment.
+* Even if the Chatroom is not authenticated, it would be nice if user could choose a username to identify each
+other in the global Chatroom.
+* We could implement a AWS Lambda function that triggers after an image is uploaded and handles compression and 
+conversion (preferably to webp).
+* A better way to handle incoming messages. Right now, new messages are displayed immediately after they arrive.
+This can somewhat disorienting for the user if they are browsing older messages. 
+* Option for a dark theme.
