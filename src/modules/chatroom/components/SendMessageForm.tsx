@@ -28,7 +28,10 @@ export const SendMessageForm: FC = () => {
   
   const sendMessage = async () => {
     const initialMessage = messageValue;
+    
+    // Clear the inputs
     setMessageValue("");
+    setFile(null);
     
     try {
       // Don't send empty messages
@@ -54,10 +57,11 @@ export const SendMessageForm: FC = () => {
         });
       }
       
-      setFile(null);
     } catch (e) {
-      // If an error occurred, fill the message again
-      setMessageValue(initialMessage);
+      // If an error occurred, revert the message if it hasn't changed (so we don't end up deleting a message that
+      // the user is currently typing)
+      if (messageValue === "")
+        setMessageValue(initialMessage);
     }
   }
   
