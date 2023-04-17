@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {MessageModelWithId} from "../models/message.model";
+import {ZMessageModelWithId} from "../models/message.model";
 import {Db} from "mongodb";
 import {messagesCollection} from "../utils/collections";
 import {rethrowForClient} from "../utils/errors";
@@ -7,12 +7,12 @@ import {rethrowForClient} from "../utils/errors";
 const OrderFlow = z.enum(["asc", "desc"]);
 export type OrderFlow = z.infer<typeof OrderFlow>;
 
-const Common = z.object({
+const ZCommon = z.object({
   orderFlow: OrderFlow,
   limit: z.number().default(10),
 })
 
-export const Input = z.discriminatedUnion("orderKey", [z.object({
+export const ZInput = z.discriminatedUnion("orderKey", [z.object({
   orderKey: z.literal("message"),
   cursor: z.object({
     min: z.string().optional(),
@@ -24,13 +24,13 @@ export const Input = z.discriminatedUnion("orderKey", [z.object({
     min: z.number().optional(),
     max: z.number().optional(),
   }).default({}),
-})]).and(Common);
+})]).and(ZCommon);
 
-export type Input = z.infer<typeof Input>;
-export type OrderKey = Input["orderKey"];
-type Output = Promise<MessageModelWithId[]>;
+export type ZInput = z.infer<typeof ZInput>;
+export type OrderKey = ZInput["orderKey"];
+type Output = Promise<ZMessageModelWithId[]>;
 
-export const handler = async (input: Input, db: Db): Output => {
+export const handler = async (input: ZInput, db: Db): Output => {
   try {
     // -1 means the sorting is reversed
     // This seems to be inverted, but we are browsing the list from the bottom
@@ -63,9 +63,9 @@ export const handler = async (input: Input, db: Db): Output => {
     
     // Ignore records that don't match the zod schema
     return result
-      .map(o => MessageModelWithId.safeParse(o))
+      .map(o => ZMessageModelWithId.safeParse(o))
       .map(o => o.success ? o.data : null)
-      .filter((o): o is MessageModelWithId => o! !== null);
+      .filter((o): o is ZMessageModelWithId => o! !== null);
   } catch (e) {
     return rethrowForClient(e);
   }

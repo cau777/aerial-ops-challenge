@@ -1,6 +1,6 @@
 import {trpc} from "../../common/hooks/trpc";
 import {AnyProcedure, inferProcedureInput} from "@trpc/server";
-import {MessageModel} from "../../../server/models/message.model";
+import {ZMessageModel} from "../../../server/models/message.model";
 
 type ContextUtils = ReturnType<typeof trpc.useContext>;
 
@@ -11,7 +11,7 @@ type ContextUtils = ReturnType<typeof trpc.useContext>;
  * @param updater
  */
 export function configureOptimisticUpdates<T extends AnyProcedure>(
-  contextUtils: ContextUtils, updater: (old: (MessageModel & { _id: string })[] | undefined, nValue: inferProcedureInput<T>) => inferProcedureInput<T>[]
+  contextUtils: ContextUtils, updater: (old: (ZMessageModel & { _id: string })[] | undefined, nValue: inferProcedureInput<T>) => inferProcedureInput<T>[]
 ): any {
   return {
     // This configuration object doesn't have the best type support.

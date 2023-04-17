@@ -4,13 +4,13 @@ import {DeleteObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {messagesCollection} from "../utils/collections";
 import {rethrowForClient} from "../utils/errors";
 
-export const Input = z.object({
+export const ZInput = z.object({
   id: z.string()
 });
 
-export type Input = z.infer<typeof Input>;
+export type ZInput = z.infer<typeof ZInput>;
 
-export const handle = async (input: Input, db: Db, storage: S3Client, bucketName: string) => {
+export const handle = async (input: ZInput, db: Db, storage: S3Client, bucketName: string) => {
   try {
     const result = await messagesCollection(db).findOneAndDelete({
       _id: {$eq: new ObjectId(input.id)}

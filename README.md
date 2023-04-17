@@ -24,7 +24,7 @@ variables. Instead, these dependencies are supplied as parameters. This dependen
 #### How new messages are handled
 The most popular approach to handling incoming data is to use a technology that allows for persistent connections
 (like WebSockets or ServerSentEvents). They tend to minimize data transfer between the client and the server. However,
-I decided to use the default refetch behaviour of react-query as bringing a new communication protocol would add too much
+I decided to use the default refetch behaviour of react-query, as bringing a new communication protocol would add too much
 complexity (we already have HTTP and tRPC).
 
 #### How image upload works

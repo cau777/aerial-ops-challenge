@@ -1,6 +1,6 @@
 import * as listRoute from "./list";
 import {getTestDbClient, testId} from "../utils/testing/test-utils";
-import {MessageModel} from "../models/message.model";
+import {ZMessageModel} from "../models/message.model";
 
 const COLLECTION_NAME = "messages";
 const EXAMPLE_ITEMS = [
@@ -31,7 +31,7 @@ describe("list route", () => {
     const result: number[] = []
     
     for (let i = 0; i < 4; i++) {
-      const page: MessageModel[] = await listRoute.handler({orderKey: "time", limit: 1, orderFlow: "asc", cursor: {max: last}}, db);
+      const page: ZMessageModel[] = await listRoute.handler({orderKey: "time", limit: 1, orderFlow: "asc", cursor: {max: last}}, db);
       expect(page.length).toEqual(1);
       last = page[0].timestamp;
       result.push(page[0].timestamp);

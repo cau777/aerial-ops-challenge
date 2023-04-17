@@ -3,7 +3,7 @@ import {ChatMessageInput} from "./ChatMessageInput";
 import {ChatFileInput} from "./ChatFileInput";
 import {trpc} from "../../common/hooks/trpc";
 import {IconButton} from "../../common/components/IconButton";
-import type {Input} from "../../../server/msg/add";
+import type {ZInput} from "../../../server/msg/add";
 import {SendIcon} from "../../common/components/icons/SendIcon";
 import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
 import {InlineErrorSmall} from "../../common/components/InlineErrorSmall";
@@ -31,7 +31,7 @@ export const SendMessageForm: FC = () => {
       const trimmedMessage = messageValue.trim();
       if (trimmedMessage.length == 0) return;
       
-      const request: Input = {message: trimmedMessage};
+      const request: ZInput = {message: trimmedMessage};
       
       // It's not necessary to further validate the file, because the previous functions already did it
       if (file !== null) {

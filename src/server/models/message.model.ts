@@ -1,21 +1,21 @@
 import {z} from "zod";
 import {ObjectId} from "mongodb";
 
-const CommonModel = z.object({
+const ZCommonModel = z.object({
   message: z.string().min(1).max(500),
   timestamp: z.number(),
 });
 
-export const MessageModel = z.discriminatedUnion("type", [z.object({
+export const ZMessageModel = z.discriminatedUnion("type", [z.object({
   type: z.literal("img"),
   image: z.string(),
 }), z.object({
   type: z.literal("text"),
-})]).and(CommonModel);
+})]).and(ZCommonModel);
 
-export type MessageModel = z.infer<typeof MessageModel>;
+export type ZMessageModel = z.infer<typeof ZMessageModel>;
 
-const Id = z.object({_id: z.instanceof(ObjectId)});
+const ZId = z.object({_id: z.instanceof(ObjectId)});
 
-export const MessageModelWithId = MessageModel.and(Id);
-export type MessageModelWithId = z.infer<typeof MessageModelWithId>;
+export const ZMessageModelWithId = ZMessageModel.and(ZId);
+export type ZMessageModelWithId = z.infer<typeof ZMessageModelWithId>;
