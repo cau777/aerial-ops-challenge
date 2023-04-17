@@ -7,5 +7,7 @@ export const rethrowForClient = (e: unknown): never => {
   console.error(e);
   if (e instanceof Error)
     throw new Error(e.name + ": " + e.message);
+  if (typeof e === "string")
+    throw new Error(e);
   throw new Error("Unknown error");
 }

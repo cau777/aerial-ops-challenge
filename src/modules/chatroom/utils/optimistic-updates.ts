@@ -1,21 +1,21 @@
 import {trpc} from "../../common/hooks/trpc";
 import {AnyProcedure, inferProcedureInput} from "@trpc/server";
-import {AppRouter} from "../../../server/routers/_app";
 import {MessageModel} from "../../../server/models/message.model";
 
 type ContextUtils = ReturnType<typeof trpc.useContext>;
-type ListProcedure = AppRouter["msg"]["list"];
 
 /**
  * Function to isolate handling optimistic updates because some type castings are necessary. It's intended
- * to used with the spread operator to configure useMutation
+ * to be used with the spread operator to configure useMutation
  * @param contextUtils
  * @param updater
  */
 export function configureOptimisticUpdates<T extends AnyProcedure>(
-  contextUtils: ContextUtils, updater: (old: (MessageModel&{_id: string})[]|undefined, nValue: inferProcedureInput<T>) => inferProcedureInput<T>[]
+  contextUtils: ContextUtils, updater: (old: (MessageModel & { _id: string })[] | undefined, nValue: inferProcedureInput<T>) => inferProcedureInput<T>[]
 ): any {
   return {
+    // This configuration object doesn't have the best type support.
+    // Part of the issue is described here: https://github.com/TanStack/query/discussions/3818
     async onMutate(nValue: T) {
       // Cancel outgoing fetches (so they don't overwrite our optimistic update)
       await contextUtils.msg.list.cancel();

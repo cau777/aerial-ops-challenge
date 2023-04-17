@@ -32,6 +32,8 @@ type Output = Promise<MessageModelWithId[]>;
 
 export const handler = async (input: Input, db: Db): Output => {
   try {
+    // -1 means the sorting is reversed
+    // This seems to be inverted, but we are browsing the list from the bottom
     const order = input.orderFlow === "asc" ? -1 : 1;
     const query = await messagesCollection(db).find();
     
@@ -58,6 +60,8 @@ export const handler = async (input: Input, db: Db): Output => {
     query.limit(input.limit);
     
     const result = await query.toArray();
+    
+    // Ignore records that don't match the zod schema
     return result
       .map(o => MessageModelWithId.safeParse(o))
       .map(o => o.success ? o.data : null)

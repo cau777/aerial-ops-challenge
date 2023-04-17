@@ -16,8 +16,9 @@ export const handle = async (input: Input, db: Db, storage: S3Client, bucketName
       _id: {$eq: new ObjectId(input.id)}
     }, {});
     
+    // If no message with that id was found
     if (result.ok === 0 || result.value === null)
-      throw new Error("Message not found");
+      return;
     
     // Also delete the stored image in S3
     if (result.value.type === "img") {

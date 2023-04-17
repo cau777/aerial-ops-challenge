@@ -8,6 +8,7 @@ import {BUCKET_NAME, storageClient} from "../utils/s3";
 export const msgRouter = router({
   add: publicProcedure
     .input(addRoute.Input)
+    // Dependencies are injected as arguments to the handlers
     .mutation(({input}) => addRoute.handler(input, db, storageClient, BUCKET_NAME)),
   
   list: publicProcedure

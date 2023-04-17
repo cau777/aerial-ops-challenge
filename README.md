@@ -12,17 +12,6 @@ This is a simple non-authenticated chat room, built to meet the following requir
 - [X] Good loading and error experience
 - [X] A jest tests with a badge on the README to indicate status
 
-## The tech stack
-- tRPC for client-api communication
-- Typescript for type-checking
-- Zod for schema validation
-- NextJS for routes
-- MongoDB to store messages
-- AWS S3 to store images
-- Jest for tests
-- pnpm for dependency management
-- Tailwind for styles
-
 ## Application design
 #### File structure
 It's structured in a modular way. More details [here](https://github.com/cau777/aerial-ops-challenge/blob/main/docs/file-structure.md).
@@ -48,6 +37,20 @@ with the file's bytes (no dependency on S3 SDK).
 #### Test coverage
 Currently, tests cover the basic behaviour of the 3 server procedures. They rely on a local MongoDb instance and
 a separate S3 storage bucket. It would be beneficial to implement some tests for the client and some E2E tests.
+
+#### Icons
+Icons are provided as functional components from [heroicons](https://heroicons.com/).
+
+## The tech stack
+- tRPC for client-api communication
+- Typescript for type-checking
+- Zod for schema validation
+- NextJS for routes
+- MongoDB to store messages
+- AWS S3 to store images
+- Jest for tests
+- pnpm for dependency management
+- Tailwind for styles
 
 ## Possible improvements
 * The app is vulnerable to Denial Of Service attacks because there's nothing preventing a malicious client from sending

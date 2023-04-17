@@ -1,11 +1,11 @@
 import {z} from "zod";
-import {generateImgName} from "../../modules/chatroom/utils/images";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {Db} from "mongodb";
 import {MessageModel} from "../models/message.model";
 import {messagesCollection} from "../utils/collections";
 import {rethrowForClient} from "../utils/errors";
+import {nanoid} from "nanoid";
 
 export const Input = z.object({
   message: z.string().min(1).max(500),
@@ -21,6 +21,10 @@ export const Input = z.object({
 export type Input = z.infer<typeof Input>;
 type Output = Promise<{ imageUrl?: string }>;
 
+const generateImgName = (extension: string) => (
+  nanoid(16) + extension
+)
+
 export const handler = async (input: Input, db: Db, storage: S3Client, bucketName: string): Output => {
   try {
     const timestamp = Date.now();
@@ -32,9 +36,11 @@ export const handler = async (input: Input, db: Db, storage: S3Client, bucketNam
     
     await messagesCollection(db).insertOne(entry);
     
+    // If it's a text message, no more work is required
     if (imgName === undefined)
       return {};
     
+    // This command is not executes, just prepared
     const command = new PutObjectCommand({
       Key: imgName,
       Bucket: bucketName,

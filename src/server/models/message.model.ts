@@ -1,19 +1,17 @@
 import {z} from "zod";
 import {ObjectId} from "mongodb";
 
-const CommonModel = {
+const CommonModel = z.object({
   message: z.string().min(1).max(500),
   timestamp: z.number(),
-};
+});
 
 export const MessageModel = z.discriminatedUnion("type", [z.object({
   type: z.literal("img"),
   image: z.string(),
-  ...CommonModel,
 }), z.object({
   type: z.literal("text"),
-  ...CommonModel,
-})]);
+})]).and(CommonModel);
 
 export type MessageModel = z.infer<typeof MessageModel>;
 

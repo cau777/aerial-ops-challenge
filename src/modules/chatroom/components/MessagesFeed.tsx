@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const MessagesFeed: FC<Props> = (props) => {
-  const {data, isLoading, isFetching, fetchNextPage} = trpc.msg.list.useInfiniteQuery({
+  const {data, isLoading, isFetching, fetchNextPage, error} = trpc.msg.list.useInfiniteQuery({
     orderFlow: props.orderFlow,
     orderKey: props.orderKey,
     limit: 5, // In production, limit probably should be higher. It's 5 for demonstration purposes.
@@ -28,7 +28,7 @@ export const MessagesFeed: FC<Props> = (props) => {
   });
   
   const onFeedEnd = async () => {
-    // If the last page returned no data
+    // If the last page returned no data, assume that there's no more data
     if (data !== undefined && data.pages.length !== 0 && data.pages[data.pages.length - 1].length === 0) {
       return;
     }
@@ -38,8 +38,8 @@ export const MessagesFeed: FC<Props> = (props) => {
   return (
     <FreezeScrollOnAdd className={"overflow-auto flex-grow h-full bg-back-light-200"}>
       <section className={"flex flex-col justify-center px-3 mb-4"}>
-        <FeedEndIndicator key={data?.pages.length ?? -1} onFeedEndVisible={onFeedEnd}
-                          isLoading={isLoading || isFetching}/>
+        <FeedEndIndicator key={data?.pages.length ?? -1} onFeedShouldFetchMore={onFeedEnd}
+                          isLoading={isLoading || isFetching} error={error}/>
         
         {data?.pages.flatMap(o => o).reverse().map(m => (
           <MessageDisplay key={m._id} id={m._id} message={m.message} timestamp={m.timestamp}

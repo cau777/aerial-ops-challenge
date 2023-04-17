@@ -32,6 +32,7 @@ export const ChatFileInput: FC<Props> = (props) => {
         return;
       }
       
+      // file.type is a MIME type like image/png
       if (!file.type.startsWith("image")) {
         setError("Please upload an image");
         return;

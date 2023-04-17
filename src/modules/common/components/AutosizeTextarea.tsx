@@ -15,7 +15,9 @@ type Props = {
 export const AutosizeTextarea: FC<Props> = (props) => {
   const getSize = (text: string) => {
     const newlines = text.match(/\n/g) || [];
-    return Math.max(props.minRows ?? 1, Math.min(props.maxRows ?? 50, newlines.length + 1));
+    const desiredRows = newlines.length + 1;
+    // Clamp the value
+    return Math.max(props.minRows ?? 1, Math.min(props.maxRows ?? 50, desiredRows));
   }
   
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

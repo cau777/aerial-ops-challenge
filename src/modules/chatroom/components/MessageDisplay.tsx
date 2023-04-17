@@ -3,9 +3,9 @@ import {trpc} from "../../common/hooks/trpc";
 import {TrashIcon} from "../../common/components/icons/TrashIcon";
 import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
 import {InlineErrorSmall} from "../../common/components/InlineErrorSmall";
-import {createS3PublicUrl, scheduleImageRefresh} from "../utils/images";
 import {formatTime} from "../utils/formatting";
 import {configureOptimisticUpdates} from "../utils/optimistic-updates";
+import {MessageImage} from "./MessageImage";
 
 type Props = {
   id: string;
@@ -16,15 +16,19 @@ type Props = {
 
 const MessageDisplayInner: FC<Props> = (props) => {
   const utils = trpc.useContext();
-  const {mutateAsync, isLoading, isError, isIdle} = trpc.msg.delete.useMutation({
+  const {mutateAsync, isLoading, isError, isIdle, error} = trpc.msg.delete.useMutation({
     ...configureOptimisticUpdates(utils, (old, nValue) => {
       return (old === undefined ? [] : old.filter(o => o._id !== nValue.id));
     }),
   });
   
   const deleteClicked = async () => {
-    if (isIdle && props.id.length > 0)
-      await mutateAsync({id: props.id});
+    try {
+      if (isIdle && props.id.length > 0)
+        await mutateAsync({id: props.id});
+    } catch (e) {
+    
+    }
   }
   
   return (
@@ -35,12 +39,11 @@ const MessageDisplayInner: FC<Props> = (props) => {
           onClick={deleteClicked}>
           {isIdle && <TrashIcon width={"1.5rem"} height={"1.5rem"}/>}
           {isLoading && <LoadingIcon width={"1.5rem"} height={"1.5rem"}/>}
-          {isError && <InlineErrorSmall message={"An error occurred. Try again later."}/>}
+          {isError && <InlineErrorSmall message={`Error: ${error}. Try again later.`}/>}
         </div>
         <p className={"whitespace-pre-wrap"}>{props.message}</p>
         {props.image && (
-          <img onError={e => scheduleImageRefresh(e.target)} className={"h-[12rem] max-w-full"}
-               src={createS3PublicUrl(props.image)} alt={props.message}/>
+          <MessageImage src={props.image} alt={props.message}/>
         )}
       </div>
       <div className={"ms-3 text-xs"}>{formatTime(new Date(props.timestamp))}</div>
@@ -48,6 +51,7 @@ const MessageDisplayInner: FC<Props> = (props) => {
   )
 }
 
+// Memo is used to improve performance
 export const MessageDisplay = memo(MessageDisplayInner, (prevProps: any, nextProps: any) => {
   for (const key in prevProps) {
     if (prevProps[key] !== nextProps[key])

@@ -16,7 +16,7 @@ export const SendMessageForm: FC = () => {
   const [file, setFile] = useState<FileWithExtension | null>(null);
   const utils = trpc.useContext();
   
-  let {mutateAsync, isLoading, isError} = trpc.msg.add.useMutation({
+  let {mutateAsync, isLoading, isError, error} = trpc.msg.add.useMutation({
     ...configureOptimisticUpdates(utils, (old, nValue) => {
       return (old === undefined ? [nValue] : [...old, nValue]);
     }),
@@ -33,10 +33,11 @@ export const SendMessageForm: FC = () => {
       
       const request: Input = {message: trimmedMessage};
       
+      // It's not necessary to further validate the file, because the previous functions already did it
       if (file !== null) {
         request.image = {
-          formatExtension: file.extension // Group 1 will be only the extension
-        }
+          formatExtension: file.extension
+        };
       }
       
       const response = await mutateAsync(request);
@@ -45,7 +46,7 @@ export const SendMessageForm: FC = () => {
         await fetch(response.imageUrl, {
           method: "PUT",
           body: await file.file.arrayBuffer(),
-        })
+        });
       }
       
       setFile(null);
@@ -57,7 +58,7 @@ export const SendMessageForm: FC = () => {
   
   return (
     <div className={"bg-back-light-0 shadow p-3"}>
-      {isError && <InlineErrorSmall message={"An error occurred. Try again later."}/>}
+      {isError && <InlineErrorSmall message={`Failed to send message. Reason: ${error}. Try again later.`}/>}
       <div className={"flex gap-3 items-center"}>
         <ChatMessageInput inputValue={messageValue} onInputChange={setMessageValue} imageNamePreviewValue={file?.file.name}
                           removeImage={() => setFile(null)} onSubmitMessage={sendMessage}/>
