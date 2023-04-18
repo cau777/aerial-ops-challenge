@@ -32,7 +32,7 @@ const MessageDisplayInner: FC<Props> = (props) => {
   }
   
   return (
-    <div className={""}>
+    <div>
       <div className={"group mb-1 m-3 inline-block bg-back-light-0 min-w-[12rem] p-3 max-w-[70%] break-words shadow"}>
         <div
           className={"opacity-0 group-hover:opacity-100 float-right cursor-pointer transition-all duration-200 hover:text-red-600"}
@@ -51,15 +51,5 @@ const MessageDisplayInner: FC<Props> = (props) => {
   )
 }
 
-// Memo is used to improve performance
-export const MessageDisplay = memo(MessageDisplayInner, (prevProps: any, nextProps: any) => {
-  for (const key in prevProps) {
-    if (prevProps[key] !== nextProps[key])
-      return false;
-  }
-  for (const key in nextProps) {
-    if (prevProps[key] !== nextProps[key])
-      return false;
-  }
-  return true;
-});
+// Memo is used to improve performance by skipping re-rendering the component when its props are unchanged
+export const MessageDisplay = memo(MessageDisplayInner);
