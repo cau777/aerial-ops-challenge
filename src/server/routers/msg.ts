@@ -3,7 +3,10 @@ import * as listRoute from "../msg/list";
 import * as deleteRoute from "../msg/delete";
 import {publicProcedure, router} from "../trpc";
 import {db} from "../utils/db";
-import {BUCKET_NAME, storageClient} from "../utils/s3";
+import {storageClient} from "../utils/s3";
+import {getEnvVar} from "../utils/env";
+
+const BUCKET_NAME = getEnvVar("AWS_S3_BUCKET");
 
 export const msgRouter = router({
   add: publicProcedure
@@ -13,7 +16,7 @@ export const msgRouter = router({
   
   list: publicProcedure
     .input(listRoute.ZInput)
-    .query(({input}) => listRoute.handler(input, db)),
+    .query(({input}) => listRoute.handler(input, db, BUCKET_NAME)),
   
   delete: publicProcedure
     .input(deleteRoute.ZInput)

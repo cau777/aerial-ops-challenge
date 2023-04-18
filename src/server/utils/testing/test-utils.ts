@@ -26,7 +26,7 @@ global.afterAll(async () => {
 export const getTestStorageClient = () => {
   return {
     storageClient: new S3Client({
-      region: process.env.AWS_S3_TEST_REGION,
+      region: process.env.AWS_S3_REGION,
       credentials: {
         accessKeyId: process.env.AWS_S3_TEST_KEY_ID!,
         secretAccessKey: process.env.AWS_S3_TEST_SECRET!,
