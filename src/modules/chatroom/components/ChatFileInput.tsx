@@ -10,8 +10,9 @@ type Props = {
 export const ChatFileInput: FC<Props> = (props) => {
   const [error, setError] = useState<string>();
   
-  const change = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.currentTarget.files;
+  const change = async (e: ChangeEvent<HTMLInputElement>) => {
+    const element = e.currentTarget;
+    const files = element.files;
     if (files == null) {
       props.setFile(null);
     } else {
@@ -47,11 +48,11 @@ export const ChatFileInput: FC<Props> = (props) => {
       props.setFile({
         file,
         extension: extension[1],
-        size: file.size
+        size: file.size,
       });
       
       // Clears the input to be ready for the next file
-      e.currentTarget.value = "";
+      element.value = "";
     }
   }
   

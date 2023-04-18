@@ -13,3 +13,12 @@ export const storageClient = new S3Client({
     secretAccessKey: AWS_S3_SECRET,
   }
 });
+
+/**
+ * Generates the public url for an image stored in S3 using its name. It is generated without the S3 SDK to avoid
+ * increasing the bundle size.
+ * @param image
+ */
+export const createS3PublicUrl = (image: string) => {
+  return `https://${BUCKET_NAME}.s3.${AWS_S3_REGION}.amazonaws.com/${image}`;
+}

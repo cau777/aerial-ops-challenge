@@ -1,9 +1,12 @@
-import {FC} from "react";
+import {FC, useState} from "react";
 import {trpc} from "../../common/hooks/trpc";
 import {OrderFlow, OrderKey} from "../../../server/msg/list";
 import {MessageDisplay} from "./MessageDisplay";
 import {FeedEndIndicator} from "./FeedEndIndicator";
 import {FreezeScrollOnAdd} from "../../common/components/FreezeScrollOnAdd";
+import {ErrorModal} from "../../common/components/ErrorModal";
+
+export const PAGE_LIMIT = 5; // In production, limit probably should be higher. It's 5 for demonstration purposes.
 
 type Props = {
   orderKey: OrderKey;
@@ -11,10 +14,11 @@ type Props = {
 }
 
 export const MessagesFeed: FC<Props> = (props) => {
+  const [deleteError, setDeleteError] = useState<string>();
   const {data, isLoading, isFetching, fetchNextPage, error} = trpc.msg.list.useInfiniteQuery({
     orderFlow: props.orderFlow,
     orderKey: props.orderKey,
-    limit: 5, // In production, limit probably should be higher. It's 5 for demonstration purposes.
+    limit: PAGE_LIMIT,
   }, {
     keepPreviousData: true,
     getNextPageParam: (lastPage) => {
@@ -36,16 +40,20 @@ export const MessagesFeed: FC<Props> = (props) => {
   }
   
   return (
-    <FreezeScrollOnAdd className={"overflow-auto flex-grow h-full bg-back-light-200"}>
-      <section className={"flex flex-col justify-center px-3 mb-4"}>
-        <FeedEndIndicator key={data?.pages.length ?? -1} onFeedShouldFetchMore={onFeedEnd}
-                          isLoading={isLoading || isFetching} error={error}/>
-        
-        {data?.pages.flatMap(o => o).reverse().map(m => (
-          <MessageDisplay key={m._id} id={m._id} message={m.message} timestamp={m.timestamp}
-                          image={m.type === "img" ? m.image : undefined}></MessageDisplay>
-        ))}
-      </section>
-    </FreezeScrollOnAdd>
+    <>
+      {deleteError && <ErrorModal message={deleteError} onClose={() => setDeleteError(undefined)}/>}
+      <FreezeScrollOnAdd className={"overflow-auto flex-grow h-full bg-back-light-200"}>
+        <section className={"flex flex-col justify-center px-3 mb-4"}>
+          <FeedEndIndicator key={data?.pages.length ?? -1} onFeedShouldFetchMore={onFeedEnd}
+                            isLoading={isLoading || isFetching} error={error}/>
+          
+          {data?.pages.flatMap(o => o).reverse().map(m => (
+            <MessageDisplay key={m._id} id={m._id} message={m.message} timestamp={m.timestamp}
+                            image={m.type === "img" ? m.image : undefined} orderFlow={props.orderFlow}
+                            orderKey={props.orderKey} onDeleteError={setDeleteError}></MessageDisplay>
+          ))}
+        </section>
+      </FreezeScrollOnAdd>
+    </>
   )
 }

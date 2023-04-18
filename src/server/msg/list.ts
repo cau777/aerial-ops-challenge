@@ -3,6 +3,7 @@ import {ZMessageModelWithId} from "../models/message.model";
 import {Db} from "mongodb";
 import {messagesCollection} from "../utils/collections";
 import {rethrowForClient} from "../utils/errors";
+import {createS3PublicUrl} from "../utils/s3";
 
 const OrderFlow = z.enum(["asc", "desc"]);
 export type OrderFlow = z.infer<typeof OrderFlow>;
@@ -65,7 +66,9 @@ export const handler = async (input: ZInput, db: Db): Output => {
     return result
       .map(o => ZMessageModelWithId.safeParse(o))
       .map(o => o.success ? o.data : null)
-      .filter((o): o is ZMessageModelWithId => o! !== null);
+      .filter((o): o is ZMessageModelWithId => o! !== null)
+      // Replaces the relative image path with the url to access it
+      .map(o => o.type === "img" ? {...o, image: createS3PublicUrl(o.image)} : o);
   } catch (e) {
     return rethrowForClient(e);
   }

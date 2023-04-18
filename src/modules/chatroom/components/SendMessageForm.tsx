@@ -7,7 +7,9 @@ import type {ZInput} from "../../../server/msg/add";
 import {SendIcon} from "../../common/components/icons/SendIcon";
 import {LoadingIcon} from "../../common/components/icons/LoadingIcon";
 import {InlineErrorSmall} from "../../common/components/InlineErrorSmall";
-import {configureOptimisticUpdates} from "../utils/optimistic-updates";
+import {configureOptimisticUpdatesForMsg} from "../utils/optimistic-updates";
+import {ZMessageModel} from "../../../server/models/message.model";
+import {Placeholder} from "../utils/images";
 
 export type FileAndData = {
   file: File;
@@ -21,9 +23,33 @@ export const SendMessageForm: FC = () => {
   const utils = trpc.useContext();
   
   let {mutateAsync, isLoading, isError, error} = trpc.msg.add.useMutation({
-    ...configureOptimisticUpdates(utils, (old, nValue) => {
-      return (old === undefined ? [nValue] : [...old, nValue]);
-    }),
+    ...configureOptimisticUpdatesForMsg<"add">(utils, {
+      orderFlow: "asc",
+      orderKey: "time",
+      limit: 5, // In production, limit probably should be higher. It's 5 for demonstration purposes.
+    }, (old, nValue) => {
+      const record: ZMessageModel & { _id: string } = nValue.image === undefined
+        ? {
+          type: "text",
+          _id: "optimistic-update",
+          message: nValue.message,
+          timestamp: Date.now(),
+        } : {
+          type: "img",
+          _id: "optimistic-update",
+          message: nValue.message,
+          timestamp: Date.now(),
+          image: Placeholder,
+        };
+      
+      if (old === undefined)
+        return {pages: [[record]], pageParams: []}
+      
+      return {
+        pages: [[record], ...old.pages],
+        pageParams: old.pageParams,
+      }
+    })
   });
   
   const sendMessage = async () => {
