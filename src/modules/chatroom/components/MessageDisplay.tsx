@@ -1,3 +1,5 @@
+'use client'
+
 import {FC, memo} from "react";
 import {trpc} from "../../common/hooks/trpc";
 import {TrashIcon} from "../../common/components/icons/TrashIcon";
@@ -5,7 +7,7 @@ import {configureOptimisticUpdatesForMsg} from "../utils/optimistic-updates";
 import {MessageImage} from "./MessageImage";
 import {OrderFlow, OrderKey} from "../../../server/msg/list";
 import {PAGE_LIMIT} from "./MessagesFeed";
-import {MessageTime} from "./MessageTime";
+import {formatTime} from "../utils/formatting";
 
 type Props = {
   id: string;
@@ -59,7 +61,7 @@ const MessageDisplayInner: FC<Props> = (props) => {
           <MessageImage src={props.image} alt={props.message}/>
         )}
       </div>
-      <MessageTime timestamp={props.timestamp}></MessageTime>
+      <div className={"ms-3 text-xs"}>{formatTime(new Date(props.timestamp))}</div>
     </div>
   )
 }
