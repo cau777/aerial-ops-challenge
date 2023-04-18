@@ -42,11 +42,14 @@ export const SendMessageForm: FC = () => {
           image: Placeholder,
         };
       
-      if (old === undefined)
+      if (old === undefined || old.pages.length === 0)
         return {pages: [[record]], pageParams: []}
       
+      const pages = [...old.pages];
+      pages[0] = [record, ...pages[0]];
+      
       return {
-        pages: [[record], ...old.pages],
+        pages,
         pageParams: old.pageParams,
       }
     })
