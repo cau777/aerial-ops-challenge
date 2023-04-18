@@ -32,10 +32,6 @@ const MessageDisplayInner: FC<Props> = (props) => {
           pageParams: []
         };
       
-      // If the message isn't ready yet
-      if (nValue.id === "optimistic-update")
-        return old;
-      
       return {
         pageParams: [...old.pageParams],
         pages: old.pages.map(page => page.filter(o => o._id !== nValue.id))
@@ -45,7 +41,7 @@ const MessageDisplayInner: FC<Props> = (props) => {
   
   const deleteClicked = async () => {
     try {
-      if (isIdle && props.id.length > 0)
+      if (isIdle && props.id.length > 0 && props.id !== "optimistic-update")
         await mutateAsync({id: props.id});
     } catch (e) { }
   }
